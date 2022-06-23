@@ -1,2 +1,2 @@
-# Python_Math
+# Python Math
 A collection of Python projects utilizing math functions to calculate and display results
