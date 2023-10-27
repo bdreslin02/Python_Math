@@ -42,9 +42,9 @@ equality_of_variances = levene_p > 0.05
 t_test_significant = t_p < 0.05
 
 mean_group1 = round(np.mean(group1), 3)
-std_group1 = round(np.std(group1, ddof=1), 3)
+std_group1 = round(np.std(group1, ddof = 1), 3)
 mean_group2 = round(np.mean(group2), 3)
-std_group2 = round(np.std(group2, ddof=1), 3)
+std_group2 = round(np.std(group2, ddof = 1), 3)
 
 descriptive_stats = pd.DataFrame({
     'Group 1': [mean_group1, std_group1],
@@ -64,6 +64,8 @@ t_p = round(t_p, 3)
 print("\nInferential Statistics:")
 print("t-statistic:", t_stat)
 print("t-test p-value:", t_p)
+
+print("\nResults of hypothesis testing:")
 
 if equality_of_variances:
     if t_test_significant:
