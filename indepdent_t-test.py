@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd 
 import scipy.stats as stats
-import matplotlib.pyplot as plot 
+import matplotlib.pyplot as plot
 
 def import_data(file_path): 
     try:
@@ -61,18 +61,18 @@ print("t-test p-value:", t_p)
 
 plot.figure(figsize = (8, 6))
 plot.subplot(2, 1, 1)
-plot.plot(['Group 1'], [mean_group1], marker = 'o', linestyle = '-', color = 'b')
-plot.title("Mean of Group 1")
-plot.xlabel("Group 1")
-plot.ylabel("Mean")
+plot.plot(range(1, len(group1) + 1), group1, marker = 'o', linestyle = '-', color = 'b')
+plot.title("Group 1 Data")
+plot.xlabel("Data Point")
+plot.ylabel("Value")
 plot.grid(True)
 
 plot.figure(figsize = (8, 6))
 plot.subplot(2, 1, 2)
-plot.plot(['Group 2'], [mean_group1], marker = 'o', linestyle = '-', color = 'r')
-plot.title("Mean of Group 2")
-plot.xlabel("Group 2")
-plot.ylabel("Mean")
+plot.plot(range(1, len(group2) + 1), group2, marker = 'o', linestyle = '-', color = 'r')
+plot.title("Group 2 Data")
+plot.xlabel("Data Point")
+plot.ylabel("Value")
 plot.grid(True)
 
 plot.tight_layout()
