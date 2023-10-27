@@ -38,6 +38,9 @@ levene_p = round(levene_p, 3)
 
 t_stat, t_p = stats.ttest_ind(group1, group2)
 
+equality_of_variances = levene_p > 0.05
+t_test_significant = t_p < 0.05
+
 mean_group1 = round(np.mean(group1), 3)
 std_group1 = round(np.std(group1, ddof=1), 3)
 mean_group2 = round(np.mean(group2), 3)
@@ -61,6 +64,14 @@ t_p = round(t_p, 3)
 print("\nInferential Statistics:")
 print("t-statistic:", t_stat)
 print("t-test p-value:", t_p)
+
+if equality_of_variances:
+    if t_test_significant:
+        print("Equality of variances: Passed, groups are homogenous\nT-Test: Significant")
+    else:
+        print("Equality of variances: Passed, groups are homogenous\nT-Test: Not significant")
+else:
+    print("Equality of variances: Failed, groups are not homogenous\nT-Test: Not performed")
 
 plot.figure(figsize = (8, 6))
 plot.subplot(2, 1, 1)
