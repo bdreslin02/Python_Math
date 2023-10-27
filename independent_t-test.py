@@ -6,6 +6,7 @@ from scipy.interpolate import make_interp_spline
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
+# Create a function to import data from a file
 def import_data(file_path): 
     try:
         data = pd.read_csv(file_path)
@@ -13,7 +14,8 @@ def import_data(file_path):
     except Exception as e:
         print("Error reading the file:", e)
         return None
-    
+
+# Create a function to allow users to manually input data
 def user_input_data():
     group1_data = entry_group1.get()
     group2_data = entry_group2.get()
@@ -26,6 +28,7 @@ def user_input_data():
         messagebox.showerror("Input Error", "Invalid input data. Please enter numeric values separated by commas.")
         return None, None
 
+# Create a function to allow users to choose their desired source of data
 def choose_data_source():
     source_choice = data_source_var.get()
 
@@ -44,27 +47,34 @@ def choose_data_source():
     else:
         messagebox.showerror("Input Error", "Please choose a data source.")
 
+# Create a function that performs the statistical tests
 def perform_t_test(group1, group2):
     try:
+        # Run Levene's test, round to three significant figures
         levene_stat, levene_p = stats.levene(group1, group2)
         levene_stat = round(levene_stat, 3)
         levene_p = round(levene_p, 3)
 
+        # Run the t-test, round to three significant figures
         t_stat, t_p = stats.ttest_ind(group1, group2)
 
+        # Define p-value cutoffs for significance
         equality_of_variances = levene_p > 0.05
         t_test_significant = t_p < 0.05
 
+        # Round descriptive statistics to three significant figures
         mean_group1 = round(np.mean(group1), 3)
         std_group1 = round(np.std(group1, ddof = 1), 3)
         mean_group2 = round(np.mean(group2), 3)
         std_group2 = round(np.std(group2, ddof = 1), 3)
 
+        # Create a table for descriptive statistics
         descriptive_stats = pd.DataFrame({
             'Group 1': [mean_group1, std_group1],
             'Group 2': [mean_group2, std_group2]
         }, index = ['Mean', 'Standard Deviation'])
 
+        # Print results
         result_text = "Descriptive Statistics:\n" + str(descriptive_stats) + "\n"
         result_text += "\nLevene's Test for Equality of Variances:\n"
         result_text += f"Levene Statistic: {levene_stat}\n"
@@ -74,6 +84,7 @@ def perform_t_test(group1, group2):
         result_text += f"t-test p-value: {round(t_p, 3)}\n\n"
         result_text += "Results of hypothesis testing:\n"
 
+        # Create statistical significance decision message
         if equality_of_variances:
             if t_test_significant:
                 result_text += "Equality of variances: Passed, groups are homogenous\nT-Test: Significant"
@@ -84,6 +95,7 @@ def perform_t_test(group1, group2):
 
         result_var.set(result_text)
 
+        # Create a smoothed line graph for group 1
         plot.figure(figsize = (8, 6))
         plot.subplot(2, 1, 1)
         x_smooth = np.linspace(1, len(group1), 300)
@@ -95,6 +107,7 @@ def perform_t_test(group1, group2):
         plot.ylabel("Value")
         plot.grid(True)
 
+        # Create a smoothed line graph for group 2
         plot.subplot(2, 1, 2)
         x_smooth = np.linspace(1, len(group2), 300)
         spl = make_interp_spline(range(1, len(group2) + 1), group2, k = 3)
