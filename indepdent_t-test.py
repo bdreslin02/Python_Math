@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd 
 import scipy.stats as stats
 import matplotlib.pyplot as plot
+from scipy.interpolate import make_interp_spline
 
 def import_data(file_path): 
     try:
@@ -32,6 +33,8 @@ elif data_source == '2':
         exit()
 
 levene_stat, levene_p = stats.levene(group1, group2)
+levene_stat = round(levene_stat, 3)
+levene_p = round(levene_p, 3)
 
 t_stat, t_p = stats.ttest_ind(group1, group2)
 
@@ -61,7 +64,10 @@ print("t-test p-value:", t_p)
 
 plot.figure(figsize = (8, 6))
 plot.subplot(2, 1, 1)
-plot.plot(range(1, len(group1) + 1), group1, marker = 'o', linestyle = '-', color = 'b')
+x_smooth = np.linspace(1, len(group1), 300)
+spl = make_interp_spline(range(1, len(group1) + 1), group1, k = 3)
+y_smooth = spl(x_smooth)
+plot.plot(x_smooth, y_smooth, color = 'b')
 plot.title("Group 1 Data")
 plot.xlabel("Data Point")
 plot.ylabel("Value")
@@ -69,7 +75,10 @@ plot.grid(True)
 
 plot.figure(figsize = (8, 6))
 plot.subplot(2, 1, 2)
-plot.plot(range(1, len(group2) + 1), group2, marker = 'o', linestyle = '-', color = 'r')
+x_smooth = np.linspace(1, len(group2), 300)
+spl = make_interp_spline(range(1, len(group2) + 1), group2, k = 3)
+y_smooth = spl(x_smooth)
+plot.plot(x_smooth, y_smooth, color = 'r')
 plot.title("Group 2 Data")
 plot.xlabel("Data Point")
 plot.ylabel("Value")
