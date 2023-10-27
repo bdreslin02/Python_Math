@@ -95,7 +95,6 @@ def perform_t_test(group1, group2):
         plot.ylabel("Value")
         plot.grid(True)
 
-        plot.figure(figsize = (8, 6))
         plot.subplot(2, 1, 2)
         x_smooth = np.linspace(1, len(group2), 300)
         spl = make_interp_spline(range(1, len(group2) + 1), group2, k = 3)
