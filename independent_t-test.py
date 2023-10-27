@@ -62,20 +62,18 @@ def perform_t_test(group1, group2):
         equality_of_variances = levene_p > 0.05
         t_test_significant = t_p < 0.05
 
+        global mean_group1, mean_group2, std_group1, std_group2
+
         # Round descriptive statistics to three significant figures
         mean_group1 = round(np.mean(group1), 3)
         std_group1 = round(np.std(group1, ddof = 1), 3)
         mean_group2 = round(np.mean(group2), 3)
         std_group2 = round(np.std(group2, ddof = 1), 3)
 
-        # Create a table for descriptive statistics
-        descriptive_stats = pd.DataFrame({
-            'Group 1': [mean_group1, std_group1],
-            'Group 2': [mean_group2, std_group2]
-        }, index = ['Mean', 'Standard Deviation'])
+        
 
         # Print results
-        result_text = "Descriptive Statistics:\n" + str(descriptive_stats) + "\n"
+        result_text = "Descriptive Statistics:\n" + "\n\n"
         result_text += "\nLevene's Test for Equality of Variances:\n"
         result_text += f"Levene Statistic: {levene_stat}\n"
         result_text += f"Levene p-value: {levene_p}\n\n"
@@ -94,6 +92,8 @@ def perform_t_test(group1, group2):
             result_text += "Equality of variances: Failed, groups are not homogenous\nT-Test: Not performed"
 
         result_var.set(result_text)
+
+        create_table(mean_group1, mean_group2, std_group1, std_group2)
 
         # Create a smoothed line graph for group 1
         plot.figure(figsize = (8, 6))
@@ -124,6 +124,18 @@ def perform_t_test(group1, group2):
     except Exception as e: 
         result_var.set("Error performing t-test:\n" + str(e))
 
+def create_table(mean_group1, mean_group2, std_group1, std_group2):
+    stats_frame = ttk.Frame(window)
+    stats_frame.grid(row=5, column=0, columnspan=1, padx=10, pady=5)
+
+    descriptive_stats = ttk.Treeview(stats_frame, columns=("Statistic", "Group 1", "Group 2"))
+    descriptive_stats.heading("Statistic", text="Statistic")
+    descriptive_stats.heading("Group 1", text="Group 1")
+    descriptive_stats.heading("Group 2", text="Group 2")
+    descriptive_stats.insert("", "end", values=("M", mean_group1, mean_group2))
+    descriptive_stats.insert("", "end", values=("SD", std_group1, std_group2))
+    descriptive_stats.grid(row=0, column=0, padx=10, pady=5)
+
 # Create a GUI window
 window = tk.Tk()
 window.title("T-Test Results")
@@ -139,7 +151,7 @@ data_source_menu = ttk.OptionMenu(window, data_source_var, "User Input", "Import
 data_source_menu.grid(row = 0, column = 1, padx = 5, pady = 5)
 
 label_group1 = ttk.Label(window, text = "Group 1 Data:")
-label_group2 = ttk.Label(window, text = "Group 2 Data")
+label_group2 = ttk.Label(window, text = "Group 2 Data:")
 
 entry_group1 = ttk.Entry(window, width = 40)
 entry_group2 = ttk.Entry(window, width = 40)
