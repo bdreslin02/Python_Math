@@ -70,8 +70,6 @@ def perform_t_test(group1, group2):
         mean_group2 = round(np.mean(group2), 3)
         std_group2 = round(np.std(group2, ddof = 1), 3)
 
-        
-
         # Print results
         result_text = "Descriptive Statistics:\n" + "\n\n"
         result_text += "\nLevene's Test for Equality of Variances:\n"
@@ -95,8 +93,10 @@ def perform_t_test(group1, group2):
 
         create_table(mean_group1, mean_group2, std_group1, std_group2)
 
-        # Create a smoothed line graph for group 1
+        # Create a figure
         plot.figure(figsize = (8, 6))
+
+        # Create a smoothed line graph for group 1
         plot.subplot(2, 1, 1)
         x_smooth = np.linspace(1, len(group1), 300)
         spl = make_interp_spline(range(1, len(group1) + 1), group1, k = 3)
