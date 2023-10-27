@@ -126,7 +126,7 @@ def perform_t_test(group1, group2):
 
 def create_table(mean_group1, mean_group2, std_group1, std_group2):
     stats_frame = ttk.Frame(window)
-    stats_frame.grid(row=5, column=0, columnspan=1, padx=10, pady=5)
+    stats_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
 
     descriptive_stats = ttk.Treeview(stats_frame, columns=("Statistic", "Group 1", "Group 2"))
     descriptive_stats.heading("Statistic", text="Statistic")
