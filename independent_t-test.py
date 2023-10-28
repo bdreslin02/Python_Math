@@ -128,7 +128,7 @@ def perform_t_test(group1, group2):
         result_var.set("Error performing t-test:\n" + str(e))
 
 def create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, levene_stat, levene_p, t_stat, df, t_p, mean_difference, lower_bound, upper_bound):
-    global stats_frame
+    global stats_frame, descriptive_stats
     stats_frame = ttk.Frame(window)
     stats_frame.grid(row = 5, column = 0, columnspan = 2, padx = 10, pady = 5, sticky = "nsew")
 
