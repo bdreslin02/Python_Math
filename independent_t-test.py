@@ -55,14 +55,21 @@ def perform_t_test(group1, group2):
         levene_stat = round(levene_stat, 3)
         levene_p = round(levene_p, 3)
 
+        global t_stat, t_p, equality_of_variances
+
         # Run the t-test, round to three significant figures
         t_stat, t_p = stats.ttest_ind(group1, group2)
+        t_stat = round(t_stat, 3)
+        t_p = round(t_p, 3)
 
         # Define p-value cutoffs for significance
         equality_of_variances = levene_p > 0.05
         t_test_significant = t_p < 0.05
 
-        global mean_group1, mean_group2, std_group1, std_group2
+        global n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2
+
+        n_group1 = len(group1)
+        n_group2 = len(group2)
 
         # Round descriptive statistics to three significant figures
         mean_group1 = round(np.mean(group1), 3)
@@ -91,7 +98,7 @@ def perform_t_test(group1, group2):
 
         result_var.set(result_text)
 
-        create_table(mean_group1, mean_group2, std_group1, std_group2)
+        create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, t_stat, t_p, equality_of_variances)
 
         # Create a figure
         plot.figure(figsize = (8, 6))
@@ -124,17 +131,28 @@ def perform_t_test(group1, group2):
     except Exception as e: 
         result_var.set("Error performing t-test:\n" + str(e))
 
-def create_table(mean_group1, mean_group2, std_group1, std_group2):
+def create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, t_stat, t_p, equality_of_variances):
     stats_frame = ttk.Frame(window)
     stats_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
 
-    descriptive_stats = ttk.Treeview(stats_frame, columns=("Statistic", "Group 1", "Group 2"))
-    descriptive_stats.heading("Statistic", text="Statistic")
-    descriptive_stats.heading("Group 1", text="Group 1")
-    descriptive_stats.heading("Group 2", text="Group 2")
-    descriptive_stats.insert("", "end", values=("M", mean_group1, mean_group2))
-    descriptive_stats.insert("", "end", values=("SD", std_group1, std_group2))
+    # Create a table for descriptive statistics
+    descriptive_stats = ttk.Treeview(stats_frame, columns=("Group", "N", "Mean", "Std. Deviation"))
+    descriptive_stats.heading("Group", text="Group")
+    descriptive_stats.heading("N", text="N")
+    descriptive_stats.heading("Mean", text="Mean")
+    descriptive_stats.heading("Std. Deviation", text="Std. Deviation")
+    descriptive_stats.insert("", "end", values=("Group 1", n_group1, mean_group1, std_group1))
+    descriptive_stats.insert("", "end", values=("Group 2", n_group2, mean_group2, std_group2))
     descriptive_stats.grid(row=0, column=0, padx=10, pady=5)
+
+    # Create a table for inferential statistics
+    inferential_stats = ttk.Treeview(stats_frame, columns=("Statistic", "Value"))
+    inferential_stats.heading("Statistic", text="Statistic")
+    inferential_stats.heading("Value", text="Value")
+    inferential_stats.insert("", "end", values=("t", t_stat))
+    inferential_stats.insert("", "end", values=("Sig.", t_p))
+    inferential_stats.insert("", "end", values=("Equality of Variances", "Passed" if equality_of_variances else "Failed"))
+    inferential_stats.grid(row=1, column=0, padx=10, pady=5)
 
 # Create a GUI window
 window = tk.Tk()
