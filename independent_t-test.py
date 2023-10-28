@@ -82,28 +82,19 @@ def perform_t_test(group1, group2):
         equality_of_variances = levene_p > 0.05
         t_test_significant = t_p < 0.05
 
-        # Print results
-        result_text = "Descriptive Statistics:\n" + "\n\n"
-        result_text += "\nLevene's Test for Equality of Variances:\n"
-        result_text += f"Levene Statistic: {levene_stat}\n"
-        result_text += f"Levene p-value: {levene_p}\n\n"
-        result_text += "Inferential Statistics:\n"
-        result_text += f"t-statistic: {round(t_stat, 3)}\n"
-        result_text += f"t-test p-value: {round(t_p, 3)}\n\n"
-        result_text += "Results of hypothesis testing:\n"
+        create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, levene_stat, levene_p, t_stat, df, t_p, mean_difference, lower_bound, upper_bound)
 
         # Create statistical significance decision message
+        decision = ""
         if equality_of_variances:
             if t_test_significant:
-                result_text += "Equality of variances: Passed, groups are homogenous\nT-Test: Significant"
+                decision += "Equality of variances: Passed, groups are homogenous\nT-Test: Significant"
             else:
-                result_text += "Equality of variances: Passed, groups are homogenous\nT-Test: Not significant"
+                decision += "Equality of variances: Passed, groups are homogenous\nT-Test: Not significant"
         else:
-            result_text += "Equality of variances: Failed, groups are not homogenous\nT-Test: Not performed"
+            decision += "Equality of variances: Failed, groups are not homogenous\nT-Test: Not performed"
 
-        result_var.set(result_text)
-
-        create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, levene_stat, levene_p, t_stat, df, t_p, mean_difference, lower_bound, upper_bound)
+        result_var.set(decision)
 
         # Create a figure
         plot.figure(figsize = (8, 6))
@@ -137,8 +128,9 @@ def perform_t_test(group1, group2):
         result_var.set("Error performing t-test:\n" + str(e))
 
 def create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_group2, levene_stat, levene_p, t_stat, df, t_p, mean_difference, lower_bound, upper_bound):
+    global stats_frame
     stats_frame = ttk.Frame(window)
-    stats_frame.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+    stats_frame.grid(row = 5, column = 0, columnspan = 2, padx = 10, pady = 5, sticky = "nsew")
 
     # Create a table for descriptive statistics
     descriptive_stats = ttk.Treeview(stats_frame, columns=("Group", "N", "Mean", "Std. Deviation"))
@@ -148,7 +140,7 @@ def create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_g
     descriptive_stats.heading("Std. Deviation", text="Std. Deviation")
     descriptive_stats.insert("", "end", values=("Group 1", n_group1, mean_group1, std_group1))
     descriptive_stats.insert("", "end", values=("Group 2", n_group2, mean_group2, std_group2))
-    descriptive_stats.grid(row=0, column=0, padx=10, pady=5)
+    descriptive_stats.grid(row = 0, column = 0, padx = 10, pady = 5)
 
     # Create a table for inferential statistics
     inferential_stats = ttk.Treeview(stats_frame, columns=("Variances", "F", "Sig.", "t", "df", "Sig. (2-tailed)", "Mean Difference", "Lower Bound", "Upper Bound"))
@@ -162,7 +154,13 @@ def create_table(n_group1, n_group2, mean_group1, mean_group2, std_group1, std_g
     inferential_stats.heading("Lower Bound", text="Lower Bound")
     inferential_stats.heading("Upper Bound", text="Upper Bound")
     inferential_stats.insert("", "end", values=("Equal variances assumed", levene_stat, levene_p, t_stat, df, t_p, mean_difference, lower_bound, upper_bound))
-    inferential_stats.grid(row=1, column=0, padx=10, pady=5)
+    inferential_stats.grid(row = 1, column = 0, padx = 10, pady = 5)
+
+def on_resize(event):
+    # Update the column and row weights to make the tables responsive
+    stats_frame.columnconfigure(0, weight = 1)
+    stats_frame.columnconfigure(1, weight = 1)
+    stats_frame.rowconfigure(0, weight = 1)
 
 # Create a GUI window
 window = tk.Tk()
@@ -197,6 +195,13 @@ calculate_button.grid(row = 3, column = 0, columnspan = 2, padx = 5, pady = 10)
 result_var = tk.StringVar()
 result_label = ttk.Label(window, textvariable=result_var, wraplength = 600)
 result_label.grid(row = 4, column = 0, columnspan = 2, padx = 10, pady = 5)
+
+# Make the window resizable
+window.columnconfigure(0, weight = 1)
+window.rowconfigure(0, weight = 1)
+
+# Bind the resize event to the on_resize function
+window.bind("<Configure>", on_resize)
 
 # Start the GUI application
 window.mainloop()
